@@ -1,0 +1,157 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header Section -->
+    <header class="bg-white shadow sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1><a href="https://www.linkedin.com/company/mb-connectivity" target="_blank" class="text-gray-800">MB CONNECTIVITY</a></h1>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#home" class="text-gray-800 hover:text-black">Home</a></li>
+                    <li><a href="#about" class="text-gray-800 hover:text-black">About</a></li>
+                    <li><a href="#services" class="text-gray-800 hover:text-black">Services</a></li>
+                    <li><a href="#contact" class="text-gray-800 hover:text-black">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="bg-white h-96 flex items-center justify-center text-center text-gray-800">
+        <div>
+            <img src="https://i.postimg.cc/6QxPGNCz/connectivity-high-resolution-logo-color-on-transparent-background.png" alt="MB CONNECTIVITY Logo" class="mx-auto mb-4 w-96 h-auto">
+            <p class="text-xs">Delivering excellence in transport modelling and analytics since 2023.</p>
+        </div>
+    </section>
+
+    <!-- Mission Statement Section -->
+    <section class="bg-gray-500 text-white py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-3xl font-bold mb-4">Our Mission</h3>
+            <p class="text-lg max-w-3xl mx-auto">
+                To provide innovative, reliable transport modelling services while promoting integrity, collaboration, and continuous improvement.
+            </p>
+        </div>
+    </section>
+
+    <!-- About Content Section -->
+    <section id="about" class="container mx-auto px-4 py-4">
+        <div class="flex flex-col gap-8">
+            <div>
+                <h3 class="text-2xl font-semibold text-black mb-4">Our Story</h3>
+                <p class="text-gray-700 mb-4">
+                    Founded by dr. <a href="https://www.linkedin.com/in/vytasdu-phd/" target="_blank" class="text-gray-800 hover:underline">Vytautas Dumbliauskas</a> in 2023, MB Connectivity has evolved from a small practice into a trusted name in transport modelling and analytics. At the heart of our growth is an unwavering commitment to our clients—one that mirrors the dedication, attentiveness, and trust of a strong and supportive partnership.
+                </p>
+                <p class="text-gray-700 mb-4">
+                    We see each project not just as a deliverable, but as a shared journey. Like in any meaningful relationship, we listen closely, respond thoughtfully, and go the extra mile to ensure our clients feel understood, supported, and fully satisfied. Their goals become our own, and their challenges fuel our drive to innovate, improve, and deliver with excellence.
+                </p>
+                <p class="text-gray-700">
+                    Guided by reliability, efficiency, and a passion for innovation, we continuously adapt to the ever-changing demands of the industry—ensuring that every solution we provide is not only tailored, but built on a foundation of mutual respect and long-term success. We pride ourselves on our ability to adapt to the ever-changing demands of the industry, ensuring that our clients receive the best possible solutions tailored to their needs.
+                </p>
+            </div>
+            <div class="w-full max-w-3xl mx-auto">
+                <iframe class="w-full h-64 md:h-96 rounded-lg shadow-lg" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="MB Connectivity Story Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="container mx-auto px-4 py-12">
+        <h3 class="text-2xl font-semibold text-black mb-6">Services</h3>
+        <p class="text-gray-700 mb-8">
+            At MB Connectivity, we provide a comprehensive range of specialized services, with a strong emphasis on transport modelling. These projects form the foundation for data-driven decision-making across transport policy, masterplanning, sustainable urban mobility planning, and network design. Leveraging advanced technologies and in-depth industry expertise, we deliver customized solutions that promote efficiency, sustainability, and innovation in every engagement.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 shadow-md rounded-lg flex flex-col text-center">
+                <div class="h-16 flex items-center justify-center">
+                    <h4 class="text-xl font-semibold text-black">Travel Demand Modelling</h4>
+                </div>
+                <p class="text-sm text-gray-700 mt-2">
+                    We develop advanced models to predict travel patterns and assess infrastructure needs, enabling our clients to plan effectively for future growth, optimize resource allocation, and enhance overall transportation system performance.
+                </p>
+            </div>
+            <div class="bg-white p-6 shadow-md rounded-lg flex flex-col text-center">
+                <div class="h-16 flex items-center justify-center">
+                    <h4 class="text-xl font-semibold text-black">Micro Simulation</h4>
+                </div>
+                <p class="text-sm text-gray-700 mt-2">
+                    Our microsimulation services deliver high-resolution traffic flow analysis, enabling precise optimization of road networks, intersections, and overall transport system performance.
+                </p>
+            </div>
+            <div class="bg-white p-6 shadow-md rounded-lg flex flex-col text-center">
+                <div class="h-16 flex items-center justify-center">
+                    <h4 class="text-xl font-semibold text-black">Geospatial Analytics</h4>
+                </div>
+                <p class="text-sm text-gray-700 mt-2">
+                    We leverage geospatial data to uncover critical spatial relationships, providing actionable insights that support strategic planning, informed decision-making, and effective resource allocation.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <section id="contact" class="bg-gray-900 text-gray-200 py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>© 2025 MB CONNECTIVITY. All rights reserved.</p>
+            <div class="mt-4">
+                <a href="mailto:info@connectivity.lt" class="text-gray-200 hover:text-white mx-2">info@connectivity.lt</a>
+                <span class="text-gray-200 mx-2">|</span>
+                <a href="https://www.linkedin.com/company/mb-connectivity" target="_blank" class="text-gray-200 hover:text-white mx-2">LinkedIn</a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
